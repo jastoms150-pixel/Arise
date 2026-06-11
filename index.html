@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#050816"/>
+<title>ARISE</title>
+<!-- All assets local — app works fully offline -->
+<link rel="stylesheet" href="./css/fonts.css"/>
+<script src="./js/react.min.js"></script>
+<script src="./js/react-dom.min.js"></script>
+<script src="./js/babel.min.js"></script>
+<style>
+html,body,#root{margin:0;padding:0;background:#050816;height:100%;width:100%;overflow:hidden}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const LEADERS = [
+  {
+    id:1,name:"Mansa Musa",title:"Emperor of Mali",
+    years:"1312–1337 CE",region:"West Africa",
+    mx:60,my:76,color:"#F4A629",dim:"#8A5500",bg:"#120A00",symbol:"⚜",
+    facts:[
+      {head:"The Richest Person in History",body:"Mansa Musa is widely considered the wealthiest human being who ever lived. Adjusted for today, his fortune is estimated at over $400 billion — more than any billionaire alive."},
+      {head:"The Pilgrimage That Crashed an Economy",body:"During his 1324 hajj to Mecca, he gave away so much gold along the route that he caused inflation across Egypt and Arabia — and the price of gold did not recover for over a decade."},
+      {head:"The University Builder",body:"He commissioned the Sankore University in Timbuktu, drawing 25,000 scholars from across the world. Under his rule, Mali became one of the greatest centres of learning, science, and culture on earth."}
+    ],
+    quiz:{q:"What happened to gold prices across Egypt and Arabia after Mansa Musa's pilgrimage?",opts:["Gold became rare and rose sharply","Gold prices crashed for over a decade due to his generosity","Nothing changed — gold was already common","The Egyptian government banned trade"],ans:1,exp:"He gave away so much gold that he flooded the market — causing a price crash that damaged economies across the region for over 12 years."}
+  },
+  {
+    id:2,name:"Queen Amina",title:"Warrior Queen of Zazzau",
+    years:"c. 1533–1610 CE",region:"West Africa",
+    mx:95,my:90,color:"#E85D04",dim:"#6B2800",bg:"#120500",symbol:"⚔",
+    facts:[
+      {head:"34 Years. Zero Defeats.",body:"Queen Amina led military campaigns for 34 consecutive years and never lost a single battle. She expanded the Kingdom of Zazzau to its greatest historical size through strategy and relentless conquest."},
+      {head:"The Walls That Still Stand",body:"After every victory, she ordered the building of defensive mud-brick fortifications around captured cities. These are known today as 'Amina Walls' — and some still stand in northern Nigeria, over 400 years later."},
+      {head:"The Trade Queen",body:"She opened major trade routes across West Africa for kola nuts, leather goods, and woven cloth — making Zazzau one of the most commercially powerful kingdoms in the Sahel."}
+    ],
+    quiz:{q:"What did Queen Amina build after every conquest that still exists today?",opts:["Grand palaces for warriors","Defensive mud-brick walls around every captured city","Sacred temples to her ancestors","Permanent market boundaries"],ans:1,exp:"Queen Amina ordered 'Amina Walls' — mud-brick defensive fortifications — around every city she captured. Some still stand in northern Nigeria today."}
+  },
+  {
+    id:3,name:"Jaja of Opobo",title:"King of Opobo",
+    years:"c. 1821–1891 CE",region:"Niger Delta",
+    mx:92,my:108,color:"#27AE60",dim:"#0E5C30",bg:"#001408",symbol:"⚓",
+    facts:[
+      {head:"From Slave to King",body:"Born into slavery and sold multiple times before he was twelve, Jaja rose through the ranks of Bonny's trading houses through sheer commercial brilliance — and eventually founded his own independent kingdom: Opobo."},
+      {head:"The Man Britain Could Not Bypass",body:"He controlled the Niger Delta palm oil trade so completely that British merchants simply could not do business without his approval. He set the terms. He kept the profit. This made him a direct threat to British commercial power."},
+      {head:"A Reader of Treaties",body:"Jaja was one of the first African rulers to read British protectorate treaties before signing — and when he understood what they actually meant, he refused. Britain eventually lured him onto a ship under a promise of safe passage, then exiled him."}
+    ],
+    quiz:{q:"What commodity did Jaja control so completely that British merchants had no choice but to deal with him?",opts:["The rubber trade","The gold and salt trade","The palm oil trade","The ivory trade"],ans:2,exp:"Jaja controlled the Niger Delta palm oil trade entirely on his own terms. Britain eventually resorted to deception to exile him."}
+  },
+  {
+    id:4,name:"Nefertiti",title:"Great Royal Wife of Egypt",
+    years:"c. 1370–1330 BCE",region:"North Africa",
+    mx:124,my:36,color:"#9B59B6",dim:"#4A1A72",bg:"#0D0018",symbol:"♛",
+    facts:[
+      {head:"The Face That Outlasted Empires",body:"Her painted limestone bust, discovered in 1912 in Amarna, is one of the most reproduced works of art in all of human history. Her likeness has shaped ideals of beauty across cultures for over 3,300 years."},
+      {head:"The Religious Revolution",body:"She and Pharaoh Akhenaten dismantled thousands of years of Egyptian polytheism and introduced worship of a single god — the sun disc, Aten. This was one of history's earliest known monotheisms."},
+      {head:"The Hidden Pharaoh",body:"After Akhenaten's death, evidence suggests Nefertiti may have ruled Egypt as Pharaoh herself — under the name Neferneferuaten — before the young Tutankhamun took the throne."}
+    ],
+    quiz:{q:"What radical religious revolution did Nefertiti and Akhenaten introduce to Ancient Egypt?",opts:["They built the largest temples to all gods","They replaced polytheism with worship of one god — the sun disc, Aten","They adopted customs of neighbouring kingdoms","They abolished all worship entirely"],ans:1,exp:"Nefertiti and Akhenaten replaced Egypt's ancient tradition of many gods with worship of one — Aten, the sun disc. One of history's earliest monotheisms."}
+  },
+  {
+    id:5,name:"Yaa Asantewaa",title:"Queen Mother of Ejisu",
+    years:"c. 1840–1921 CE",region:"West Africa",
+    mx:70,my:100,color:"#E74C3C",dim:"#7A1A14",bg:"#120000",symbol:"♟",
+    facts:[
+      {head:"The Words That Changed Everything",body:"When Ashanti chiefs hesitated to resist British colonial rule, Yaa Asantewaa stood up and declared: 'If you the men will not go forward, then we the women will. We will fight the white men.' And she meant it."},
+      {head:"The War of the Golden Stool",body:"In 1900, she commanded thousands of Ashanti warriors against British forces for nearly a year — one of the last and greatest anti-colonial uprisings in African history."},
+      {head:"What They Were Protecting",body:"The Golden Stool (Sika Dwa) is the sacred soul of the Ashanti nation. When the British Governor demanded to sit on it — treating it like a piece of furniture — Yaa Asantewaa led a full armed uprising."}
+    ],
+    quiz:{q:"What sacred object did Yaa Asantewaa lead a war to protect from the British in 1900?",opts:["The Golden Mask of Kumasi","The Royal Crown of Ashanti","The Golden Stool (Sika Dwa)","The Sacred Drum of Osei Tutu"],ans:2,exp:"The Golden Stool is the spiritual soul of the Ashanti people. When the British Governor demanded to sit on it, Yaa Asantewaa launched an uprising that lasted nearly a year."}
+  },
+  {
+    id:6,name:"Shaka Zulu",title:"King of the Zulu Kingdom",
+    years:"c. 1787–1828 CE",region:"Southern Africa",
+    mx:90,my:190,color:"#1ABC9C",dim:"#0A6658",bg:"#001410",symbol:"⚡",
+    facts:[
+      {head:"From 1,500 to 250,000",body:"Shaka inherited a minor Zulu clan of fewer than 1,500 people. Through military innovation, political genius, and relentless strategy, he built a military nation of over 250,000 — unifying dozens of separate tribes."},
+      {head:"The Bull Horn Formation",body:"He invented the impondo zankomo — the 'bull horn' battle tactic. A central 'chest' engaged the enemy directly while two 'horns' swept around both flanks to encircle them. Historians compare it to Napoleon and Alexander the Great."},
+      {head:"The Weapon That Changed Everything",body:"He replaced the long throwing spear with the short stabbing assegai (iklwa) and a large cowhide shield — forcing close combat where Zulu warriors had the decisive advantage. This transformed warfare across southern Africa."}
+    ],
+    quiz:{q:"How did Shaka Zulu's 'bull horn' formation (impondo zankomo) work?",opts:["Warriors formed a defensive circle of overlapping shields","A central 'chest' pinned the enemy while two 'horns' encircled them from both sides","Warriors charged in a V-shape at the enemy's weakest point","A strategic retreat to draw enemies into an ambush"],ans:1,exp:"The bull horn pinned the enemy frontally with a 'chest', while two 'horns' swept both flanks to fully encircle them. It built the Zulu Kingdom into the dominant power of southern Africa."}
+  }
+];
+
+const AFRICA_PATH="M 38,8 C 70,4 100,5 126,14 C 130,26 130,40 134,54 C 140,66 148,78 148,86 C 144,100 132,114 128,128 C 124,142 116,158 108,174 C 98,192 84,214 76,228 C 64,230 52,224 44,214 C 34,200 28,182 24,163 C 20,145 20,128 22,112 C 16,98 20,84 26,72 C 22,62 18,50 22,37 C 26,21 32,10 38,8 Z";
+const STARS=Array.from({length:60},(_,i)=>({id:i,x:(i*17.3+7)%100,y:(i*23.7+13)%100,r:0.5+(i%3)*0.5,dl:(i%5)*0.7,dr:2+(i%4)*0.6}));
+
+const CSS=`
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050816;overflow:hidden}
+.gw{max-width:430px;margin:0 auto;height:100vh;height:100dvh;overflow:hidden;position:relative;background:#050816;font-family:'Nunito',sans-serif;color:#F5EDD8}
+.tf{font-family:'Cinzel Decorative',cursive}
+.sf{font-family:'Cinzel',serif}
+@keyframes tw{0%,100%{opacity:.12}50%{opacity:.9}}
+@keyframes ai{from{transform:translateY(38px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes pr{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.55);opacity:.1}}
+@keyframes cb{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes glow{0%,100%{opacity:.4}50%{opacity:1}}
+.aa{animation:ai .75s ease both}.aa1{animation:ai .75s .1s ease both}.aa2{animation:ai .75s .22s ease both}
+.aa3{animation:ai .75s .38s ease both}.aa4{animation:ai .75s .55s ease both}
+.cb{animation:cb .5s ease both}.sh{animation:sh .35s ease}.fl{animation:fl 3s ease-in-out infinite}
+.star{position:absolute;border-radius:50%;background:#F5EDD8}
+.pulse{animation:pr 2.2s ease-in-out infinite}
+`;
+
+function ARISE(){
+  const[screen,setScreen]=useState("home");
+  const[leader,setLeader]=useState(null);
+  const[factIdx,setFactIdx]=useState(0);
+  const[tab,setTab]=useState("story");
+  const[pick,setPick]=useState(null);
+  const[learned,setLearned]=useState(()=>{try{return JSON.parse(localStorage.getItem("arise_learned")||"[]")}catch{return[]}});
+  const[xp,setXp]=useState(()=>{try{return parseInt(localStorage.getItem("arise_xp")||"0")}catch{return 0}});
+  const[celebrating,setCelebrating]=useState(false);
+  const[shaking,setShaking]=useState(false);
+
+  const isUnlocked=(id)=>id===1||learned.includes(id-1);
+  const isLearned=(id)=>learned.includes(id);
+  const openLeader=(l)=>{if(!isUnlocked(l.id))return;setLeader(l);setFactIdx(0);setTab("story");setPick(null);setCelebrating(false);setScreen("leader")};
+  const handleAnswer=(idx)=>{
+    if(pick!==null||celebrating)return;setPick(idx);
+    if(idx===leader.quiz.ans){
+      setTimeout(()=>{
+        if(!isLearned(leader.id)){const nl=[...learned,leader.id];const nx=xp+100;setLearned(nl);setXp(nx);try{localStorage.setItem("arise_learned",JSON.stringify(nl));localStorage.setItem("arise_xp",nx)}catch{}}
+        setCelebrating(true);setTimeout(()=>{setCelebrating(false);setScreen("map");setLeader(null)},2800);
+      },700);
+    }else{setShaking(true);setTimeout(()=>setShaking(false),400)}
+  };
+
+  if(screen==="home")return(
+    <div className="gw" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <style>{CSS}</style>
+      {STARS.map(s=><div key={s.id} className="star" style={{left:`${s.x}%`,top:`${s.y}%`,width:s.r*2,height:s.r*2,animation:`tw ${s.dr}s ${s.dl}s ease-in-out infinite`}}/>)}
+      <div className="aa" style={{width:"100%",textAlign:"center",marginBottom:"2.5rem"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"0.6rem",justifyContent:"center",marginBottom:"0.4rem"}}>
+          <div style={{flex:1,height:1,background:"linear-gradient(90deg,transparent,#F4A62966)"}}/>
+          <span style={{color:"#F4A629",fontSize:"0.85rem"}}>✦</span>
+          <div style={{flex:1,height:1,background:"linear-gradient(90deg,#F4A62966,transparent)"}}/>
+        </div>
+        <p className="sf" style={{fontSize:"0.6rem",letterSpacing:"0.3em",color:"#6A5528",textTransform:"uppercase"}}>GameUp Africa Presents</p>
+      </div>
+      <div style={{textAlign:"center",position:"relative",zIndex:1}}>
+        <h1 className="tf aa1" style={{fontSize:"clamp(4.5rem,24vw,6.5rem)",background:"linear-gradient(175deg,#FFE08A 0%,#F4A629 42%,#B87800 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1,letterSpacing:"0.04em",filter:"drop-shadow(0 0 28px rgba(244,166,41,0.35))"}}>ARISE</h1>
+        <p className="sf aa2" style={{fontSize:"0.72rem",letterSpacing:"0.25em",color:"#C89A48",textTransform:"uppercase",marginTop:"0.3rem",marginBottom:"0.85rem"}}>African Journeys</p>
+        <p className="aa3" style={{fontSize:"0.88rem",color:"#8A7850",lineHeight:1.72,maxWidth:280,margin:"0 auto 2.2rem"}}>Journey across the continent. Meet the legends. Reclaim the stories that belong to all of us.</p>
+        <button className="aa4" onClick={()=>setScreen("map")} style={{background:"linear-gradient(135deg,#F4A629 0%,#B87800 100%)",border:"none",borderRadius:50,padding:"0.9rem 2.6rem",color:"#050816",fontWeight:700,fontSize:"0.95rem",fontFamily:"Cinzel,serif",letterSpacing:"0.1em",cursor:"pointer",boxShadow:"0 0 32px rgba(244,166,41,0.38),0 4px 16px rgba(0,0,0,0.4)"}}>Begin Journey</button>
+      </div>
+      <div className="aa4" style={{position:"absolute",bottom:"2rem",display:"flex",gap:"2.5rem"}}>
+        {[["6","Leaders"],["54","Countries"],["1","Continent"]].map(([n,l])=>(
+          <div key={l} style={{textAlign:"center"}}>
+            <div className="tf" style={{fontSize:"1.5rem",color:"#F4A629",lineHeight:1}}>{n}</div>
+            <div style={{fontSize:"0.58rem",color:"#5A4A28",letterSpacing:"0.18em",textTransform:"uppercase",marginTop:"0.2rem"}}>{l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if(screen==="map")return(
+    <div className="gw" style={{display:"flex",flexDirection:"column"}}>
+      <style>{CSS}</style>
+      <div style={{padding:"0.9rem 1.2rem 0.4rem",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"0.45rem"}}>
+          <span className="tf" style={{fontSize:"1.05rem",background:"linear-gradient(90deg,#FFE08A,#F4A629)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>ARISE</span>
+          <div style={{textAlign:"right"}}>
+            <div className="sf" style={{fontSize:"0.65rem",color:"#8A7048",letterSpacing:"0.1em"}}>{learned.length}/{LEADERS.length} LEADERS FOUND</div>
+            <div className="sf" style={{fontSize:"0.68rem",color:"#F4A629"}}>{xp} XP</div>
+          </div>
+        </div>
+        <div style={{height:3,background:"#0D1020",borderRadius:3,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${(learned.length/LEADERS.length)*100}%`,background:"linear-gradient(90deg,#F4A629,#FFE08A)",borderRadius:3,transition:"width 0.6s ease"}}/>
+        </div>
+      </div>
+      <p style={{textAlign:"center",fontSize:"0.62rem",color:"#4A3A20",letterSpacing:"0.18em",margin:"0.2rem 0"}}>TAP A LEADER TO BEGIN</p>
+      <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 0.8rem 0.5rem"}}>
+        <svg viewBox="0 0 200 238" style={{width:"100%",maxHeight:"72vh"}}>
+          {STARS.slice(0,28).map(s=><circle key={s.id} cx={s.x*2} cy={s.y*2.38} r={s.r*0.38} fill="#F5EDD8" opacity="0.12" style={{animation:`tw ${s.dr}s ${s.dl}s ease-in-out infinite`}}/>)}
+          <path d={AFRICA_PATH} fill="#0C1628" stroke="#1E3050" strokeWidth="0.7"/>
+          {[50,100,150].map(x=><line key={x} x1={x} y1={0} x2={x} y2={238} stroke="#101E35" strokeWidth="0.3"/>)}
+          {[60,120,180].map(y=><line key={y} x1={0} y1={y} x2={200} y2={y} stroke="#101E35" strokeWidth="0.3"/>)}
+          {LEADERS.filter(l=>isLearned(l.id)&&l.id>1&&isLearned(l.id-1)).map(l=>{const prev=LEADERS.find(x=>x.id===l.id-1);return <line key={l.id} x1={prev.mx} y1={prev.my} x2={l.mx} y2={l.my} stroke="#F4A62938" strokeWidth="0.8" strokeDasharray="2.5 4"/>})}
+          {LEADERS.map(l=>{
+            const unlocked=isUnlocked(l.id),learnd=isLearned(l.id),available=unlocked&&!learnd;
+            return(
+              <g key={l.id} onClick={()=>openLeader(l)} style={{cursor:unlocked?"pointer":"default"}}>
+                {available&&<circle cx={l.mx} cy={l.my} r={13} fill="none" stroke={l.color} strokeWidth="1.2" className="pulse" opacity="0.5"/>}
+                {learnd&&<circle cx={l.mx} cy={l.my} r={11} fill="none" stroke={l.color} strokeWidth="0.6" opacity="0.3" style={{animation:`glow 2.5s ease-in-out infinite`}}/>}
+                <circle cx={l.mx} cy={l.my} r={7.5} fill={learnd?l.color:available?`${l.color}22`:"#0D1628"} stroke={learnd?"none":available?l.color:"#283A58"} strokeWidth="1.3" style={learnd?{filter:`drop-shadow(0 0 5px ${l.color})`}:{}}/>
+                <text x={l.mx} y={l.my+0.5} textAnchor="middle" dominantBaseline="middle" fontSize={learnd?"5.5":"6.5"} fill={unlocked?(learnd?"#050816":l.color):"#2A3A55"}>{learnd?"✓":unlocked?l.symbol:"🔒"}</text>
+                <text x={l.mx} y={l.my+13.5} textAnchor="middle" fontSize="4.2" fill={unlocked?l.color:"#2A3A55"} fontFamily="Nunito,sans-serif" fontWeight="700">{l.name.split(" ")[0]}</text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      {learned.length===LEADERS.length&&<div style={{textAlign:"center",padding:"0.4rem 0 1rem",fontFamily:"Cinzel,serif",fontSize:"0.8rem",color:"#F4A629"}}>✦ You have walked with the Greats ✦</div>}
+      {learned.length===0&&<div style={{textAlign:"center",padding:"0.4rem 0 1rem",fontSize:"0.7rem",color:"#F4A62966"}}>✦ Mansa Musa awaits in West Africa ✦</div>}
+    </div>
+  );
+
+  if(screen==="leader"&&leader){
+    const fact=leader.facts[factIdx],L=leader;
+    return(
+      <div className="gw" style={{display:"flex",flexDirection:"column"}}>
+        <style>{CSS}</style>
+        <div style={{position:"absolute",inset:0,background:`radial-gradient(ellipse at 50% 0%,${L.bg} 0%,#050816 65%)`,zIndex:0}}/>
+        <div style={{padding:"0.9rem 1.2rem 0",zIndex:1,display:"flex",alignItems:"center",gap:"0.75rem"}}>
+          <button onClick={()=>{setScreen("map");setLeader(null)}} style={{background:"none",border:"1px solid #2A2A4A",borderRadius:"50%",width:32,height:32,color:"#8A7A5A",cursor:"pointer",fontSize:"1rem",display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+          <span className="sf" style={{fontSize:"0.62rem",letterSpacing:"0.2em",color:"#6A5A38",textTransform:"uppercase"}}>{L.region}</span>
+          <div style={{marginLeft:"auto",fontFamily:"Cinzel,serif",fontSize:"0.65rem",color:"#F4A629"}}>{xp} XP</div>
+        </div>
+        <div className="aa" style={{zIndex:1,textAlign:"center",padding:"0.75rem 1.5rem 0.6rem"}}>
+          <div className="fl" style={{width:86,height:86,margin:"0 auto 0.65rem",borderRadius:"50%",background:`radial-gradient(circle at 38% 38%,${L.dim}88 0%,${L.bg} 100%)`,border:`2px solid ${L.color}`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 0 28px ${L.color}44,0 0 8px ${L.color}66`,fontSize:"2.4rem",position:"relative"}}>
+            {L.symbol}
+            <div style={{position:"absolute",inset:-7,borderRadius:"50%",border:`1px solid ${L.color}30`}}/>
+          </div>
+          <h2 className="tf" style={{fontSize:"clamp(1.15rem,5.5vw,1.6rem)",background:`linear-gradient(140deg,#FFE08A,${L.color})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:"0.1rem",lineHeight:1.2}}>{L.name}</h2>
+          <p className="sf" style={{fontSize:"0.7rem",color:L.color,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"0.1rem"}}>{L.title}</p>
+          <p style={{fontSize:"0.66rem",color:"#6A5838"}}>{L.years}</p>
+        </div>
+        <div style={{zIndex:1,display:"flex",margin:"0 1.2rem 0.6rem",background:"#0A0D1C",borderRadius:50,padding:3}}>
+          {[["story","📖  Story"],["quiz","⚡  Challenge"]].map(([t,lbl])=>(
+            <button key={t} onClick={()=>{setTab(t);if(t==="quiz")setPick(null)}} style={{flex:1,padding:"0.48rem",border:"none",borderRadius:50,background:tab===t?L.color:"transparent",color:tab===t?"#050816":"#6A5838",fontWeight:700,fontSize:"0.78rem",cursor:"pointer",fontFamily:"Nunito,sans-serif",transition:"all 0.2s",letterSpacing:"0.03em"}}>{lbl}</button>
+          ))}
+        </div>
+        <div style={{zIndex:1,flex:1,padding:"0 1.2rem 1.2rem",overflowY:"auto"}}>
+          {tab==="story"&&(
+            <div key={factIdx} className="aa">
+              <div style={{display:"flex",gap:5,marginBottom:"0.85rem"}}>
+                {L.facts.map((_,i)=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=factIdx?L.color:"#141828",transition:"background 0.3s"}}/>)}
+              </div>
+              <div style={{background:"#070A16",borderRadius:14,border:`1px solid ${L.color}28`,padding:"1.25rem 1.1rem",boxShadow:`inset 0 0 20px ${L.color}08`}}>
+                <p className="sf" style={{fontSize:"0.78rem",color:L.color,marginBottom:"0.6rem",letterSpacing:"0.05em"}}>{fact.head}</p>
+                <p style={{lineHeight:1.78,color:"#B8AE9A",fontSize:"0.875rem"}}>{fact.body}</p>
+              </div>
+              <button onClick={()=>{if(factIdx<L.facts.length-1)setFactIdx(f=>f+1);else{setTab("quiz");setPick(null);setCelebrating(false)}}} style={{width:"100%",marginTop:"0.85rem",background:`linear-gradient(135deg,${L.color},${L.dim})`,border:"none",borderRadius:50,padding:"0.88rem",color:"#050816",fontWeight:700,fontSize:"0.9rem",fontFamily:"Cinzel,serif",cursor:"pointer",letterSpacing:"0.08em",boxShadow:`0 4px 20px ${L.color}33`}}>
+                {factIdx<L.facts.length-1?"Continue →":"Take the Challenge ⚡"}
+              </button>
+              {factIdx<L.facts.length-1&&<button onClick={()=>{setTab("quiz");setPick(null);setCelebrating(false)}} style={{width:"100%",marginTop:"0.5rem",background:"transparent",border:`1px solid ${L.color}44`,borderRadius:50,padding:"0.6rem",color:L.color,cursor:"pointer",fontSize:"0.75rem",fontFamily:"Cinzel,serif",opacity:0.7}}>Skip to Challenge</button>}
+            </div>
+          )}
+          {tab==="quiz"&&(
+            <div className="aa">
+              {celebrating?(
+                <div className="cb" style={{textAlign:"center",padding:"2rem 1rem"}}>
+                  <div style={{fontSize:"3.5rem",marginBottom:"0.6rem"}}>{L.symbol}</div>
+                  <h2 className="tf" style={{fontSize:"2.2rem",lineHeight:1,background:`linear-gradient(140deg,#FFE08A,${L.color})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:"0.4rem"}}>AROSE!</h2>
+                  <p className="sf" style={{fontSize:"0.75rem",color:L.color,letterSpacing:"0.1em",marginBottom:"0.3rem"}}>{L.name} Unlocked</p>
+                  <p style={{fontSize:"0.8rem",color:"#8A7850"}}>{L.region} • {L.years}</p>
+                  <div style={{marginTop:"0.85rem",display:"inline-block",padding:"0.35rem 1rem",border:"1px solid #F4A629",borderRadius:50}}>
+                    <span className="sf" style={{fontSize:"0.78rem",color:"#F4A629"}}>+100 XP</span>
+                  </div>
+                  {!isLearned(L.id+1)&&L.id<LEADERS.length&&<p style={{marginTop:"0.85rem",fontSize:"0.72rem",color:"#6A5838"}}>{LEADERS.find(x=>x.id===L.id+1)?.name} is now unlocked ›</p>}
+                </div>
+              ):(
+                <>
+                  <div style={{background:"#070A16",borderRadius:14,border:`1px solid ${L.color}28`,padding:"1.1rem",marginBottom:"0.85rem"}}>
+                    <p className="sf" style={{fontSize:"0.6rem",color:L.color,letterSpacing:"0.18em",marginBottom:"0.45rem"}}>CHALLENGE</p>
+                    <p style={{fontSize:"0.9rem",lineHeight:1.68,color:"#F5EDD8",fontWeight:600}}>{L.quiz.q}</p>
+                  </div>
+                  {L.quiz.opts.map((opt,i)=>{
+                    const isCorrect=i===L.quiz.ans,isPicked=i===pick;
+                    let bg="#070A16",brd="#1A1A32",col="#B0A890";
+                    if(pick!==null){if(isCorrect){bg="#061A10";brd="#27AE60";col="#2ECC71"}else if(isPicked){bg="#1A0606";brd="#C0392B";col="#E74C3C"}}
+                    return(
+                      <button key={i} onClick={()=>handleAnswer(i)} className={shaking&&isPicked&&!isCorrect?"sh":""} style={{display:"block",width:"100%",background:bg,border:`1px solid ${brd}`,borderRadius:12,padding:"0.82rem 0.95rem",marginBottom:"0.55rem",color:col,textAlign:"left",fontSize:"0.855rem",cursor:pick!==null?"default":"pointer",fontFamily:"Nunito,sans-serif",transition:"all 0.28s",lineHeight:1.5}}>
+                        <span style={{color:L.color,marginRight:"0.5rem",fontFamily:"Cinzel,serif",fontSize:"0.72rem"}}>{String.fromCharCode(65+i)}.</span>{opt}
+                      </button>
+                    );
+                  })}
+                  {pick!==null&&pick!==L.quiz.ans&&(
+                    <div style={{background:"#070A16",border:`1px solid ${L.color}28`,borderRadius:12,padding:"0.9rem",marginTop:"0.2rem"}}>
+                      <p style={{fontSize:"0.78rem",color:"#8A7850",lineHeight:1.65}}><span className="sf" style={{color:L.color}}>Not quite. </span>{L.quiz.exp}</p>
+                      <button onClick={()=>setPick(null)} style={{marginTop:"0.75rem",width:"100%",background:"transparent",border:`1px solid ${L.color}66`,borderRadius:50,padding:"0.6rem",color:L.color,cursor:"pointer",fontFamily:"Cinzel,serif",fontSize:"0.78rem"}}>Try Again</button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<ARISE/>);
+</script>
+</body>
+</html>
